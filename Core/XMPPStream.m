@@ -3693,7 +3693,8 @@ enum XMPPStreamConfig
 		NSString *srvHost = srvRecord.target;
 		UInt16 srvPort    = srvRecord.port;
 		
-		success = [self connectToHost:srvHost onPort:srvPort withTimeout:XMPPStreamTimeoutNone error:&connectError];
+		//success = [self connectToHost:srvHost onPort:srvPort withTimeout:XMPPStreamTimeoutNone error:&connectError];
+                success = [self connectToHost:@"xmpp.medigram.com" onPort:5222 withTimeout:XMPPStreamTimeoutNone error:&connectError];
 		
 		if (success)
 		{
