@@ -9,6 +9,9 @@
 #import <objc/runtime.h>
 #import <libkern/OSAtomic.h>
 
+# Import XMPP_HOST to avoid performing an SRV lookup
+#import "XMPPFramework.h"
+
 #if TARGET_OS_IPHONE
   // Note: You may need to add the CFNetwork Framework to your project
   #import <CFNetwork/CFNetwork.h>
@@ -3763,7 +3766,8 @@ enum XMPPStreamConfig
 		NSString *srvHost = srvRecord.target;
 		UInt16 srvPort    = srvRecord.port;
 		
-		success = [self connectToHost:srvHost onPort:srvPort withTimeout:XMPPStreamTimeoutNone error:&connectError];
+		//success = [self connectToHost:srvHost onPort:srvPort withTimeout:XMPPStreamTimeoutNone error:&connectError];
+		success = [self connectToHost:XMPP_HOST onPort:5222 withTimeout:XMPPStreamTimeoutNone error:&connectError];
 		
 		if (success)
 		{
