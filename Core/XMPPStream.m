@@ -3761,7 +3761,7 @@ enum XMPPStreamConfig
     //This makes the xmpp Host Name dependent upon the bundle identifier name so it's easy to change
     //for development or QA builds
     NSString *xmppHostName = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleIdentifier"];
-    NSArray *xmppHostNameComponents = [hostName componentsSeparatedByString:@"."];
+    NSArray *xmppHostNameComponents = [xmppHostName componentsSeparatedByString:@"."];
     if([xmppHostNameComponents count] > 1)
     {
         NSString *tempHostName = [xmppHostNameComponents objectAtIndex:2];
