@@ -9,9 +9,6 @@
 #import <objc/runtime.h>
 #import <libkern/OSAtomic.h>
 
-# Import XMPP_HOST to avoid performing an SRV lookup
-#import "XMPPFramework.h"
-
 #if TARGET_OS_IPHONE
   // Note: You may need to add the CFNetwork Framework to your project
   #import <CFNetwork/CFNetwork.h>
@@ -3760,14 +3757,30 @@ enum XMPPStreamConfig
 	NSError *connectError = nil;
 	BOOL success = NO;
 	
+    //Pull BundleIdentifier and rip out v2 (always present) to create xmppHostName
+    //This makes the xmpp Host Name dependent upon the bundle identifier name so it's easy to change
+    //for development or QA builds
+    NSString *xmppHostName = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleIdentifier"];
+    NSArray *xmppHostNameComponents = [hostName componentsSeparatedByString:@"."];
+    if([xmppHostNameComponents count] > 1)
+    {
+        NSString *tempHostName = [xmppHostNameComponents objectAtIndex:2];
+        tempHostName = [tempHostName stringByReplacingOccurrencesOfString:@"v2" withString:@""];
+        xmppHostName = [NSString stringWithFormat:@"xmpp.%@.com",tempHostName];
+    }
+    else
+    {
+        xmppHostName = @"xmpp.medigram.com";
+    }
+    NSLog(@"XMPPStream : xmppHostName = %@",xmppHostName);
+
 	while (srvResultsIndex < [srvResults count])
 	{
 		XMPPSRVRecord *srvRecord = [srvResults objectAtIndex:srvResultsIndex];
 		NSString *srvHost = srvRecord.target;
 		UInt16 srvPort    = srvRecord.port;
 		
-		//success = [self connectToHost:srvHost onPort:srvPort withTimeout:XMPPStreamTimeoutNone error:&connectError];
-		success = [self connectToHost:XMPP_HOST onPort:5222 withTimeout:XMPPStreamTimeoutNone error:&connectError];
+        	success = [self connectToHost:xmppHostName onPort:5222 withTimeout:XMPPStreamTimeoutNone error:&connectError];
 		
 		if (success)
 		{
@@ -3789,7 +3802,7 @@ enum XMPPStreamConfig
 		// 
 		// In other words, just try connecting to the domain specified in the JID.
 		
-		success = [self connectToHost:[myJID_setByClient domain] onPort:5222 withTimeout:XMPPStreamTimeoutNone error:&connectError];
+        	success = [self connectToHost:xmppHostName onPort:5222 withTimeout:XMPPStreamTimeoutNone error:&connectError];
 	}
 	
 	if (!success)
