@@ -189,7 +189,7 @@
 // 
 // The debugging macro adds a significant amount of overhead, and should NOT be enabled on production builds.
 
-#if DEBUG
+#ifdef DEBUG
   #define DDXML_DEBUG_MEMORY_ISSUES 0
 #else
   #define DDXML_DEBUG_MEMORY_ISSUES 0 // Don't change me!
