@@ -4068,20 +4068,11 @@ enum XMPPStreamConfig
 	NSError *connectError = nil;
 	BOOL success = NO;
 
-    //Pull BundleIdentifier and rip out v2 (always present) to create xmppHostName
-    //This makes the xmpp Host Name dependent upon the bundle identifier name so it's easy to change
-    //for development or QA builds
-    NSString *xmppHostName = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleIdentifier"];
-    NSArray *xmppHostNameComponents = [xmppHostName componentsSeparatedByString:@"."];
-    if([xmppHostNameComponents count] > 1)
-    {
-        NSString *tempHostName = [xmppHostNameComponents objectAtIndex:2];
-        tempHostName = [tempHostName stringByReplacingOccurrencesOfString:@"v2" withString:@""];
-        xmppHostName = [NSString stringWithFormat:@"xmpp.%@.com",tempHostName];
-    }
-    else
-    {
-        xmppHostName = @"xmpp.medigram.com";
+    //Check if app is for staging or production and set XMPPHostName accordingly
+    NSString *bundleIdentifier = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleIdentifier"];
+    NSString *xmppHostName = @"xmpp.medigram.com";
+    if( [bundleIdentifier  isEqual: @"com.medigram.medigramv2-staging"] ){
+        xmppHostName=@"xmpp.medigram-staging.com";
     }
     NSLog(@"XMPPStream : tryNextSrvResult : xmppHostName = %@",xmppHostName);
     
