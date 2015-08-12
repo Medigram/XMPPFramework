@@ -23,7 +23,5 @@
 @property (nonatomic, assign, setter=setX400:)      BOOL isX400;
 @property (nonatomic, assign, setter=setPreferred:) BOOL isPreferred;
 
-@property (nonatomic, weak) NSString *userid;
-
 
 @end

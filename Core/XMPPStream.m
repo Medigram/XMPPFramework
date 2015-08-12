@@ -1943,7 +1943,7 @@ enum XMPPStreamConfig
 		
 		id <XMPPSASLAuthentication> someAuth = nil;
         
-		if ([self supportsSCRAMSHA1Authentication])
+/*		if ([self supportsSCRAMSHA1Authentication])
 		{
 			someAuth = [[XMPPSCRAMSHA1Authentication alloc] initWithStream:self password:password];
 			result = [self authenticate:someAuth error:&err];
@@ -1955,9 +1955,9 @@ enum XMPPStreamConfig
 		}
 		else if ([self supportsPlainAuthentication])
 		{
-			someAuth = [[XMPPPlainAuthentication alloc] initWithStream:self password:password];
+*/			someAuth = [[XMPPPlainAuthentication alloc] initWithStream:self password:password];
 			result = [self authenticate:someAuth error:&err];
-		}
+/*		}
 		else if ([self supportsDeprecatedDigestAuthentication])
 		{
 			someAuth = [[XMPPDeprecatedDigestAuthentication alloc] initWithStream:self password:password];
@@ -1976,7 +1976,7 @@ enum XMPPStreamConfig
 			err = [NSError errorWithDomain:XMPPStreamErrorDomain code:XMPPStreamUnsupportedAction userInfo:info];
 			
 			result = NO;
-		}
+		}*/
 	}};
 	
 	
@@ -4069,47 +4069,11 @@ enum XMPPStreamConfig
 	BOOL success = NO;
 
     //Check if app is for staging or production and set XMPPHostName accordingly
-    NSString *bundleIdentifier = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleIdentifier"];
-    NSString *xmppHostName = @"xmpp.medigram.com";
-    if( [bundleIdentifier  isEqual: @"com.medigram.medigramv2-staging"] ){
-        xmppHostName=@"xmpp.medigram-staging.com";
-    }
-    NSLog(@"XMPPStream : tryNextSrvResult : xmppHostName = %@",xmppHostName);
-    
-	while (srvResultsIndex < [srvResults count])
-	{
-        /*
-		XMPPSRVRecord *srvRecord = [srvResults objectAtIndex:srvResultsIndex];
-		NSString *srvHost = srvRecord.target;
-		UInt16 srvPort    = srvRecord.port;
-		success = [self connectToHost:srvHost onPort:srvPort withTimeout:XMPPStreamTimeoutNone error:&connectError];
-         */
-        success = [self connectToHost:xmppHostName onPort:5222 withTimeout:XMPPStreamTimeoutNone error:&connectError];
+    NSString *xmppHostName = @"xmpp.medigram-staging.com"; // TODO: change for release
 
-		if (success)
-		{
-			break;
-		}
-		else
-		{
-			srvResultsIndex++;
-		}
-	}
-	
-	if (!success)
-	{
-		// SRV resolution of the JID domain failed.
-		// As per the RFC:
-		// 
-		// "If the SRV lookup fails, the fallback is a normal IPv4/IPv6 address record resolution
-		// to determine the IP address, using the "xmpp-client" port 5222, registered with the IANA."
-		// 
-		// In other words, just try connecting to the domain specified in the JID.
-		
-		success = [self connectToHost:[myJID_setByClient domain] onPort:5222 withTimeout:XMPPStreamTimeoutNone error:&connectError];
-	}
-	
-	if (!success)
+    success = [self connectToHost:xmppHostName onPort:5222 withTimeout:XMPPStreamTimeoutNone error:&connectError];
+
+    if (!success)
 	{
 		[self endConnectTimeout];
 		
